@@ -39,9 +39,12 @@ async def main():
     try:
         # Регистрация роутеров
         from handlers.onboarding import onboarding_router
+        from handlers.stamp_transfer import stamp_transfer_router
+        from handlers.main_menu import main_menu
 
+        dp.include_router(main_menu)
         dp.include_router(onboarding_router)
-
+        dp.include_router(stamp_transfer_router)
         await dp.start_polling(bot)
     finally:
         cleanup_task_handle.cancel()
