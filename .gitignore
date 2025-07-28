@@ -1,3 +1,4 @@
+config.py
 __pycache__/
 *.pyc
 *.pyo
@@ -7,4 +8,3 @@ __pycache__/
 *.log
 .vscode/
 .idea/
-config.py
