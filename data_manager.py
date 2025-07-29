@@ -50,14 +50,20 @@ class SecureDataManager:
         """Сохраняет данные пользователя (БЕЗ логирования персональных данных)"""
         session_dir = self.get_session_dir(user_id, session_id)
 
+        old_data = self.load_user_data(
+            user_id, session_id
+        )  # Проверка существования сессии
+        for key in data:
+            old_data[key] = data[key]
         # Обезличенное сохранение данных
         safe_data = {
             "timestamp": datetime.now().isoformat(),
             "fields_count": len(data),
-            "data": data,  # Данные сохраняются, но не логируются
+            "data": old_data,  # Данные сохраняются, но не логируются
         }
 
         with open(session_dir / "data.json", "w", encoding="utf-8") as f:
+
             json.dump(safe_data, f, ensure_ascii=False, indent=2)
 
         logger.info(f"Saved {len(data)} data fields for user {user_id}")
@@ -68,7 +74,7 @@ class SecureDataManager:
         data_file = session_dir / "data.json"
 
         if not data_file.exists():
-            return None
+            return {}
 
         try:
             with open(data_file, "r", encoding="utf-8") as f:

@@ -7,7 +7,7 @@ def get_waiting_confirm_stamp_transfer_start_keyboard(lang: str = "ru"):
     builder = InlineKeyboardBuilder()
     builder.button(
         text=_.get_text("stamp_transfer.confirm_start_button", lang),
-        callback_data="confirm_stamp_transfer_start",
+        callback_data="select_region_and_mvd",
     )
     builder.button(
         text=_.get_text("stamp_transfer.cancel_button", lang),

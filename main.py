@@ -41,10 +41,12 @@ async def main():
         from handlers.onboarding import onboarding_router
         from handlers.stamp_transfer import stamp_transfer_router
         from handlers.main_menu import main_menu
+        from handlers.select_region_and_mvd import select_region_router
 
         dp.include_router(main_menu)
         dp.include_router(onboarding_router)
         dp.include_router(stamp_transfer_router)
+        dp.include_router(select_region_router)
         await dp.start_polling(bot)
     finally:
         cleanup_task_handle.cancel()
