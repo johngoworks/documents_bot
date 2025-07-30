@@ -21,7 +21,7 @@ async def handle_stamp_restoration(callback: CallbackQuery, state: FSMContext):
     # Установка состояния для передачи штампа
     await state.set_state(Stamp_transfer.waiting_confirm_stamp_transfer_start)
     state_data = await state.get_data()
-    lang = state_data["language"]
+    lang = state_data.get("language")
     await state.update_data(from_action="stamp_transfer_after_mvd")
     text = f"{_.get_text('stamp_transfer.title', lang)}\n{_.get_text('stamp_transfer.description', lang)}{_.get_text('stamp_transfer.documents_to_prepare', lang)}"
     # Отправка сообщения с клавиатурой ожидания подтверждения
