@@ -6,3 +6,5 @@ class Stamp_transfer(StatesGroup):
 
     waiting_confirm_stamp_transfer_start = State()
     after_select_mvd = State()
+    after_old_passport = State()
+    after_new_passport = State()

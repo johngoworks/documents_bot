@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
 from states.stamp_transfer import Stamp_transfer
@@ -46,12 +46,47 @@ async def handle_stamp_transfer_after_mvd(callback: CallbackQuery, state: FSMCon
     }
     data_manager.save_user_data(callback.from_user.id, session_id, user_data)
 
-    await state.update_data(from_action="stamp_transfer_old_passport")
+    await state.update_data(from_action=Stamp_transfer.after_old_passport)
     await state.update_data(passport_title="stamp_transfer_passport_old_title")
 
     text = f"{_.get_text('stamp_transfer_passport_start.title', lang)}\n{_.get_text('stamp_transfer_passport_start.description', lang)}"
     # Отправка сообщения с клавиатурой для начала передачи паспорта
     await callback.message.edit_text(
+        text=text,
+        reply_markup=stamp_transfer_passport_start_keyboard(lang),
+    )
+
+
+@stamp_transfer_router.message(Stamp_transfer.after_old_passport)
+async def handle_old_passport_data(message: Message, state: FSMContext):
+    """Обработка начала передачи паспорта после выбора МВД"""
+    passport_data = await state.get_data()
+    passport_data = passport_data.get("passport_data")
+    passport_issue_place = message.text.strip()
+    passport_data["passport_issue_place"] = passport_issue_place
+
+    # Get the user's language preference from state data
+    state_data = await state.get_data()
+    lang = state_data.get("language")
+    old_passport_data = passport_data
+    passport_data = {}
+    # Update the state with the passport issue place
+    await state.update_data(passport_data=passport_data)
+    user_data = {
+        "passport_data": passport_data,
+    }
+    session_id = state_data.get("session_id")
+    data_manager.save_user_data(message.from_user.id, session_id, user_data)
+    user_data = {
+        "old_passport_data": old_passport_data,
+    }
+    data_manager.save_user_data(message.from_user.id, session_id, user_data)
+    # Установка состояния для передачи паспорта
+
+    text = f"{_.get_text('stamp_transfer_start_new_passport.title', lang)}\n{_.get_text('stamp_transfer_start_new_passport.description', lang)}"
+
+    # Отправка сообщения с клавиатурой для начала передачи паспорта
+    await message.answer(
         text=text,
         reply_markup=stamp_transfer_passport_start_keyboard(lang),
     )
