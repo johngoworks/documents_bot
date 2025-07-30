@@ -3,7 +3,10 @@ from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 from states.stamp_transfer import Stamp_transfer
-from keyboards.stamp_transfer import get_waiting_confirm_stamp_transfer_start_keyboard
+from keyboards.stamp_transfer import (
+    get_waiting_confirm_stamp_transfer_start_keyboard,
+    stamp_transfer_passport_start_keyboard,
+)
 from localization import _
 from data_manager import SecureDataManager
 
@@ -42,3 +45,13 @@ async def handle_stamp_transfer_after_mvd(callback: CallbackQuery, state: FSMCon
         "mvd_adress": mvd_adress,
     }
     data_manager.save_user_data(callback.from_user.id, session_id, user_data)
+
+    await state.update_data(from_action="stamp_transfer_old_passport")
+    await state.update_data(passport_title="stamp_transfer_passport_old_title")
+
+    text = f"{_.get_text('stamp_transfer_passport_start.title', lang)}\n{_.get_text('stamp_transfer_passport_start.description', lang)}"
+    # Отправка сообщения с клавиатурой для начала передачи паспорта
+    await callback.message.edit_text(
+        text=text,
+        reply_markup=stamp_transfer_passport_start_keyboard(lang),
+    )
