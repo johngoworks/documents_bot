@@ -3,6 +3,9 @@ from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
 from states.stamp_transfer import Stamp_transfer
+from states.passport_manual import PassportManualStates
+from states.live_adress import LiveAdress
+from states.phone_number import PhoneNumberStates
 from keyboards.stamp_transfer import (
     get_waiting_confirm_stamp_transfer_start_keyboard,
     stamp_transfer_passport_start_keyboard,
@@ -80,13 +83,36 @@ async def handle_old_passport_data(message: Message, state: FSMContext):
     user_data = {
         "old_passport_data": old_passport_data,
     }
+    await state.update_data(old_passport_data=old_passport_data)
     data_manager.save_user_data(message.from_user.id, session_id, user_data)
     # Установка состояния для передачи паспорта
 
-    text = f"{_.get_text('stamp_transfer_start_new_passport.title', lang)}\n{_.get_text('stamp_transfer_start_new_passport.description', lang)}"
+    text = f"{_.get_text('stamp_transfer_start_new_passport.title', lang)}\n\n{_.get_text('stamp_transfer_start_new_passport.description', lang)}"
 
     # Отправка сообщения с клавиатурой для начала передачи паспорта
     await message.answer(
         text=text,
-        reply_markup=stamp_transfer_passport_start_keyboard(lang),
     )
+    next_states = [LiveAdress.adress, PhoneNumberStates.phone_number_input]
+    await state.update_data(
+        from_action=Stamp_transfer.after_new_passport, next_states=next_states
+    )
+    await state.set_state(PassportManualStates.birth_date_input)
+
+
+@stamp_transfer_router.message(Stamp_transfer.after_new_passport)
+async def handle_new_passport_data(message: Message, state: FSMContext):
+    """Обработка ввода данных нового паспорта после передачи старого паспорта"""
+    state_data = await state.get_data()
+    waiting_data = state_data.get("waiting_data", None)
+
+    # Сохранение адреса в менеджер данных
+    session_id = state_data.get("session_id")
+    user_data = {
+        waiting_data: message.text.strip(),
+    }
+    await state.update_data({waiting_data: message.text.strip()})
+    data_manager.save_user_data(message.from_user.id, session_id, user_data)
+    from pprint import pprint
+
+    pprint(state_data)

@@ -43,13 +43,16 @@ async def main():
         from handlers.main_menu import main_menu
         from handlers.select_region_and_mvd import select_region_router
         from handlers.passport_manual import passport_manual_router
+        from handlers.phone_number import phone_number_router
+        from handlers.live_adress import live_adress_router
 
         dp.include_router(main_menu)
         dp.include_router(onboarding_router)
         dp.include_router(stamp_transfer_router)
         dp.include_router(select_region_router)
         dp.include_router(passport_manual_router)
-
+        dp.include_router(phone_number_router)
+        dp.include_router(live_adress_router)
         await dp.start_polling(bot)
     finally:
         cleanup_task_handle.cancel()

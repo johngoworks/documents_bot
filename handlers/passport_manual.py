@@ -180,8 +180,21 @@ async def handle_passport_expiry_date_input(message: Message, state: FSMContext)
     }
     session_id = state_data.get("session_id")
     data_manager.save_user_data(message.from_user.id, session_id, user_data)
-    end_state = state_data.get("from_action")
+    await state.update_data(waiting_data=["passport_data", "passport_issue_place"])
     text = f"{_.get_text('passport_manual_issue_place.title', lang)}\n{_.get_text('passport_manual_issue_place.example_text', lang)}"
     await message.answer(text=text, reply_markup=None)
-
-    await state.set_state(end_state)
+    next_states = state_data.get("next_states", [])
+    from_action = state_data.get("from_action")
+    print(f"Next states: {next_states}, From action: {from_action}")
+    if len(next_states) == 1:
+        print("Only one next state available, setting to from_action")
+        await state.set_state(from_action)
+    elif len(next_states) > 0:
+        print(f"Next states available: {next_states}")
+        next_state = next_states[0]
+        await state.set_state(next_state)
+    else:
+        print("No next states found, returning to from_action")
+        # If no next states, return to the previous action
+        await state.set_state(from_action)
+    print(f"Next state set to: {next_state if next_states else from_action}")
