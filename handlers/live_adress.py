@@ -20,24 +20,12 @@ async def handle_live_adress_input(message: Message, state: FSMContext):
     waiting_data = state_data.get("waiting_data", None)
 
     # Сохранение адреса в менеджер данных
-    if type(waiting_data) is str:
-        session_id = state_data.get("session_id")
-        user_data = {
-            waiting_data: message.text.strip(),
-        }
-        await state.update_data({waiting_data: message.text.strip()})
-        data_manager.save_user_data(message.from_user.id, session_id, user_data)
-    elif type(waiting_data) is list:
-        session_id = state_data.get("session_id")
-        waiting_primary_key = state_data.get(waiting_data[0], dict)
-        waiting_primary_key = waiting_primary_key[waiting_data[1]] = (
-            message.text.strip()
-        )
-
-        await state.update_data(waiting_primary_key)
-        data_manager.save_user_data(
-            message.from_user.id, session_id, waiting_primary_key
-        )
+    session_id = state_data.get("session_id")
+    user_data = {
+        waiting_data: message.text.strip(),
+    }
+    await state.update_data({waiting_data: message.text.strip()})
+    data_manager.save_user_data(message.from_user.id, session_id, user_data)
 
     # Отправка подтверждения пользователю
     text = f"{_.get_text("live_adress.title", lang)}/n{_.get_text("live_adress.format_text", lang)}\n\n{_.get_text("live_adress.example_text", lang)}"

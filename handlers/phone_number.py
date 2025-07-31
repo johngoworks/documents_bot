@@ -33,7 +33,7 @@ async def handle_phone_number_input(message: Message, state: FSMContext):
     # Отправка подтверждения пользователю
     text = f"{_.get_text('phone_number.title', lang)}\n{_.get_text('phone_number.example_text', lang)}"
     await message.answer(text=text)
-    await state.update_data(waiting_data="live_adress")
+    await state.update_data(waiting_data="phone_number")
     # Переход к следующему состоянию, если есть
     next_states = state_data.get("next_states", [])
     from_action = state_data.get("from_action")

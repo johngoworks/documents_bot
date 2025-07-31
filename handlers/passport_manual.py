@@ -180,7 +180,7 @@ async def handle_passport_expiry_date_input(message: Message, state: FSMContext)
     }
     session_id = state_data.get("session_id")
     data_manager.save_user_data(message.from_user.id, session_id, user_data)
-    await state.update_data(waiting_data=["passport_data", "passport_issue_place"])
+    await state.update_data(waiting_data="passport_issue_place")
     text = f"{_.get_text('passport_manual_issue_place.title', lang)}\n{_.get_text('passport_manual_issue_place.example_text', lang)}"
     await message.answer(text=text, reply_markup=None)
     next_states = state_data.get("next_states", [])
