@@ -3,8 +3,9 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from config import BOT_TOKEN
+from config import BOT_TOKEN, API_TOKEN
 from data_manager import SecureDataManager
+from ocr.ocr import DocumentsOcr
 
 # Настройка логирования (без персональных данных)
 logging.basicConfig(
@@ -13,6 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Глобальные объекты
+DocMaster = DocumentsOcr(api_key=API_TOKEN)
 data_manager = SecureDataManager()
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
