@@ -47,6 +47,7 @@ async def main():
         from handlers.passport_manual import passport_manual_router
         from handlers.phone_number import phone_number_router
         from handlers.live_adress import live_adress_router
+        from handlers.nortification_arrival import nortification_arrival
 
         dp.include_router(main_menu)
         dp.include_router(onboarding_router)
@@ -55,6 +56,7 @@ async def main():
         dp.include_router(passport_manual_router)
         dp.include_router(phone_number_router)
         dp.include_router(live_adress_router)
+        dp.include_router(nortification_arrival)
         await dp.start_polling(bot)
     finally:
         cleanup_task_handle.cancel()
