@@ -22,8 +22,8 @@ async def arrival_start(callback: CallbackQuery, state: FSMContext):
     await state.set_state(Arrival_transfer.waiting_confirm_start)
     state_data = await state.get_data()
     lang = state_data.get("language")
-    await state.update_data(from_action="stamp_transfer_after_mvd")
-    text = f"{_.get_text('stamp_transfer.title', lang)}\n{_.get_text('stamp_transfer.description', lang)}{_.get_text('stamp_transfer.documents_to_prepare', lang)}"
+    await state.update_data(from_action="")
+    text = f"{_.get_text('startarrival.title', lang)}\n{_.get_text('startarrival.description', lang)}"
     # Отправка сообщения с клавиатурой ожидания подтверждения
     await callback.message.edit_text(
         text=text,
